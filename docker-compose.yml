@@ -1,0 +1,29 @@
+services:
+  # OSRM Colombia completa - reemplazo de arlysv/osrm-popayan para domicilios nacional
+  osrm-colombia:
+    build: .
+    image: arlysv/osrm-colombia:2026.09
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./data:/data
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # API de optimización (repo Joker8-h/Optimizacion_Of_Rutas) apuntando a Colombia
+  route-optimizer:
+    build: https://github.com/Joker8-h/Optimizacion_Of_Rutas.git
+    ports:
+      - "8000:8000"
+    environment:
+      - OSRM_BASE_URL=http://osrm-colombia:5000
+      - FUEL_L_PER_100KM=7.5
+      - FUEL_PRICE_PER_LITER=15000
+    depends_on:
+      osrm-colombia:
+        condition: service_started
+    restart: always

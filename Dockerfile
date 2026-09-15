@@ -3,9 +3,6 @@
 FROM osrm/osrm-backend:latest AS builder
 WORKDIR /data
 # Se espera colombia-latest.osm.pbf en ./data al hacer build (ver build.ps1)
-# Se copian perfiles oficiales de la imagen base (/opt/*.lua)
-RUN apt-get update && apt-get install -y --no-install-recommends osmium-tool && rm -rf /var/lib/apt/lists/*
-
 COPY data/colombia-latest.osm.pbf /data/colombia-latest.osm.pbf
 
 # 1. Extract (el paso más pesado: 1-2h para Colombia en PC normal, requiere 8GB+ RAM)
